@@ -1,0 +1,29 @@
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8001/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+feign:
+  hystrix:
+    enabled: true
+logging:
+  level:
+    com:
+      soraka:
+        auth: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+server:
+  port: 8005
+spring:
+  application:
+    name: soraka-auth
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+

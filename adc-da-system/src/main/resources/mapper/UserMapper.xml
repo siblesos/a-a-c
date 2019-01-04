@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.adc.da.system.dao.UserDAO">
+    <!--所有字段-->
+    <sql id="all_fields">
+        sys_user.id,
+        sys_user.username,
+        sys_user.name,
+        sys_user.mobilephone,
+        sys_user.email,
+        sys_user.password,
+        sys_user.gender,
+        sys_user.status,
+        sys_user.dept_id,
+        sys_user.create_user,
+        sys_user.modify_user,
+        sys_user.create_time,
+        sys_user.modify_time,
+        sys_user.deleted
+    </sql>
+    <select id="get" resultType="com.adc.da.common.model.domain.UserDO" parameterType="java.lang.Long">
+        SELECT
+            <include refid="all_fields"/>
+        FROM
+            sys_user
+        WHERE
+            sys_user.id = #{id}
+    </select>
+    <select id="getByUsername" resultType="com.adc.da.common.model.domain.UserDO">
+        SELECT
+            <include refid="all_fields"/>
+        FROM
+            sys_user
+        WHERE
+            sys_user.username = #{username}
+    </select>
+    <select id="getByMobilephone" resultType="com.adc.da.common.model.domain.UserDO">
+        SELECT
+            <include refid="all_fields"/>
+        FROM
+            sys_user
+        WHERE
+            sys_user.mobilephone = #{mobilephone}
+    </select>
+    <select id="getByEmail" resultType="com.adc.da.common.model.domain.UserDO">
+        SELECT
+            <include refid="all_fields"/>
+        FROM
+            sys_user
+        WHERE
+            sys_user.email = #{email}
+    </select>
+    <select id="find" resultType="com.adc.da.common.model.domain.UserDO" parameterType="com.adc.da.system.model.dto.QueryParam">
+        SELECT
+            <include refid="all_fields"/>
+        FROM
+            sys_user
+        <where>
+            <if test="queryText != null and queryText.trim() != ''">
+                OR username = #{queryText}
+                OR email = #{queryText}
+                OR mobilephone = #{queryText}
+                OR name = #{queryText}
+            </if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                ORDER BY ${sort} ${order}
+            </when>
+            <otherwise>
+                ORDER BY sys_user.id DESC
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="count" resultType="java.lang.Integer" parameterType="com.adc.da.system.model.dto.QueryParam">
+        SELECT COUNT(*) FROM
+        sys_user
+        <where>
+            <if test="queryText != null and queryText.trim() != ''">
+                OR username = #{queryText}
+                OR email = #{queryText}
+                OR mobilephone = #{queryText}
+                OR name = #{queryText}
+            </if>
+        </where>
+    </select>
+    <insert id="save" parameterType="com.adc.da.common.model.domain.UserDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user (
+            username,
+            name,
+            mobilephone,
+            email,
+            password,
+            gender,
+            dept_id,
+            create_user,
+            modify_user
+        )
+        VALUES
+            (
+                #{username},
+                #{name},
+                #{mobilephone},
+                #{email},
+                #{password},
+                #{gender},
+                #{deptId},
+                #{createUser},
+                #{modifyUser}
+            )
+    </insert>
+    <update id="update" parameterType="com.adc.da.common.model.domain.UserDO">
+        UPDATE sys_user
+        <set>
+            <if test="name != null">name = #{name}, </if>
+            <if test="mobilephone != null">mobilephone = #{mobilephone}, </if>
+            <if test="email != null">email = #{email}, </if>
+            <if test="password != null">password = #{password}, </if>
+            <if test="gender != null">gender = #{gender}, </if>
+            <if test="status != null">status = #{status}, </if>
+            <if test="deptId != null">dept_id = #{deptId}, </if>
+            <if test="deleted != null">deleted = #{deleted}, </if>
+            <if test="modifyUser != null">modify_user = #{modifyUser}, </if>
+            modify_time = now()
+        </set>
+        WHERE id = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM sys_user WHERE id = #{id}
+    </delete>
+</mapper>

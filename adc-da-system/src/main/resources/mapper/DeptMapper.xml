@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.adc.da.system.dao.DeptDAO">
+    <!--所有字段-->
+    <sql id="all_fields">
+        id,
+        name,
+        code,
+        parent_id,
+        status,
+        sequence,
+        deleted,
+        create_user,
+        modify_user,
+        create_time,
+        modify_time
+    </sql>
+    <select id="get" resultType="com.adc.da.common.model.domain.DeptDO" parameterType="java.lang.Long">
+        SELECT
+            <include refid="all_fields"/>
+        FROM
+            sys_dept
+        WHERE
+            id = #{id}
+    </select>
+    <select id="find" resultType="com.adc.da.common.model.domain.DeptDO" parameterType="com.adc.da.system.model.dto.QueryParam">
+        SELECT
+        <include refid="all_fields"/>
+        FROM
+        sys_dept
+        <where>
+            <if test="queryText != null and queryText.trim() != ''">
+                OR name = #{queryText}
+            </if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                ORDER BY ${sort} ${order}
+            </when>
+            <otherwise>
+                ORDER BY sys_dept.id DESC
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="count" resultType="java.lang.Integer" parameterType="com.adc.da.system.model.dto.QueryParam">
+        SELECT COUNT(*) FROM
+        sys_dept
+        <where>
+            <if test="queryText != null and queryText.trim() != ''">
+                AND name = #{queryText}
+            </if>
+        </where>
+    </select>
+    <insert id="save" parameterType="com.adc.da.common.model.domain.DeptDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_dept (
+            name,
+            code,
+            parent_id,
+            sequence,
+            create_user,
+            modify_user
+        )
+        VALUES
+            (
+                #{name},
+                #{code},
+                #{parentId},
+                #{sequence},
+                #{createUser},
+                #{modifyUser}
+            )
+    </insert>
+    <update id="update" parameterType="com.adc.da.common.model.domain.DeptDO">
+        UPDATE sys_dept
+        <set>
+            <if test="name != null">name = #{name}, </if>
+            <if test="code != null">code = #{code}, </if>
+            <if test="parentId != null">parent_id = #{parentId}, </if>
+            <if test="status != null">status = #{status}, </if>
+            <if test="sequence != null">sequence = #{sequence}, </if>
+            <if test="modifyUser != null">modify_user = #{modifyUser}, </if>
+            modify_time = now()
+        </set>
+        WHERE id = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM sys_dept WHERE id = #{id}
+    </delete>
+</mapper>
